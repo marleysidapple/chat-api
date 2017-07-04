@@ -4,6 +4,7 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var mongoose = require('mongoose');
 var logger = require('morgan');
+var appRoutes = require('./routes/app');
 
 const PORT = 7000 || process.env.port;
 
@@ -18,6 +19,9 @@ var app = express();
 //connection to db
 mongoose.connect('mongodb://localhost:27017/chat-app',  { useMongoClient: true });
 
+
+//make use of routes
+app.use('/', appRoutes);
 
 //setting bodyParser and cookie parser in order to parse the params from the api
 app.use(logger('dev'));
