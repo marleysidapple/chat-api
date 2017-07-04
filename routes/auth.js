@@ -1,8 +1,19 @@
 var express = require('express');
 var router = express.Router();
 
-router.get('/login', function(req, res, next){
-	res.send('hey there');
+module.exports = function(passport){
+//sign up
+router.post('/register', passport.authenticate('register', {
+		successRedirect: '/auth/register/success',
+		failureRedirect: '/auth/register/failure'
+	}));
+
+
+router.get('/register/failure', function(req, res){
+	res.send('failed to register');
 });
 
-module.exports = router;
+return router;
+
+}
+
