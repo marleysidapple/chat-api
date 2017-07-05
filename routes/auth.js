@@ -13,6 +13,11 @@ router.get('/register/failure', function(req, res){
 	res.send('failed to register');
 });
 
+router.get('/register/success', function(req, res){
+	res.send('successfully registered');
+});
+
+
 return router;
 
 }

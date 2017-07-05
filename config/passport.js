@@ -5,21 +5,21 @@ var bCrypt = require('bcrypt-nodejs');
 
 module.exports = function(passport){
 	passport.use('register', new LocalStrategy({
-		//usernameField: 'email',
+		usernameField: 'email',
+		passwordField: 'password',
 		passReqToCallback : true // allows us to pass back the entire request to the callback
-	}, function(req, username, password, fullname, status, done ){
-		User.findOne({'username': username}, function(err, user){
+	}, function(req, email, password, done ){
+		User.findOne({'email': email}, function(err, user){
 			if(err){
 				console.log('error in signup ' + err)
 				return done(err);
 			}
-
 			if(user){
 				console.log('user already exists');
 				return done(null, false);
 			} else{
 				var newUser = new User();
-				newUser.username = username;
+				newUser.email = email;
 				newUser.password = createHash(password);
 				newUser.save(function(err){
 					if(err){
