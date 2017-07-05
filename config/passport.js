@@ -26,12 +26,12 @@ module.exports = function(passport){
 	}, function(req, email, password, done ){
 		User.findOne({'email': email}, function(err, user){
 			if(err){
-				console.log('error in signup ' + err)
+				//console.log('error in signup ' + err)
 				return done(err);
 			}
 			if(user){
-				console.log('User already exists');
-				return done(null, false);
+				//console.log('User already exists');
+				return done(null, false, { message: 'user already exists'});
 			} else{
 				var newUser = new User();
 				newUser.email = email;
