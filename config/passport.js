@@ -4,6 +4,21 @@ var User = mongoose.model('User');
 var bCrypt = require('bcrypt-nodejs');
 
 module.exports = function(passport){
+
+	//needs to serialize and deserialize the user
+	passport.serializeUser(function(user, done){
+		console.log('serializing user:',user);
+		done(null, user._id);
+	});
+
+	passport.deserializeUser(function(id, done){
+		User.findById(id, function(err, user){
+			console.log('deserializing user:',user);
+			done(err, user);
+		});
+	});
+
+
 	passport.use('register', new LocalStrategy({
 		usernameField: 'email',
 		passwordField: 'password',
@@ -15,12 +30,13 @@ module.exports = function(passport){
 				return done(err);
 			}
 			if(user){
-				console.log('user already exists');
+				console.log('User already exists');
 				return done(null, false);
 			} else{
 				var newUser = new User();
 				newUser.email = email;
 				newUser.password = createHash(password);
+				newUser.fullname = req.body.fullname;
 				newUser.save(function(err){
 					if(err){
 						console.log('error in signup');
@@ -29,9 +45,6 @@ module.exports = function(passport){
 					return done(null, newUser);
 				});
 			}
-
-
-
 		});
 	})
 
