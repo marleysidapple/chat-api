@@ -13,21 +13,21 @@ router.post('/register', function(req, res){
 	var acceptedParams = ['email', 'fullname', 'password'];
 	var returnedKeys = Object.keys(req.body); 
 	if(sanitizeRequestParams(acceptedParams, returnedKeys)){
-		return res.status(301).json({ error: 'invalid request' });	 
+		return res.status(500).json({ error: 'invalid request' });	 
 	}
+
+	if (req.body.email == "" || req.body.password == "" || req.body.fullname == ""){
+		return res.status(500).json({error: 'missing params'});
+	}
+
 	//check whether the user is already in the database
 	User.findOne({email: req.body.email}, function(err, user){
 		if (err){
-			return res.status(301).json(err);
+			return res.status(500).json(err);
 		}
 		if(user){
-			return res.status(301).json({error: 'user already exists'});
+			return res.status(500).json({error: 'user already exists'});
 		} 
-
-		if (req.body.email == "" || req.body.password == "" || req.body.fullname == ""){
-			return res.status(301).json({error: 'missing params'});
-		}
-
 		//now save the user to db
 		var newUser = new User();
 		newUser.email = req.body.email;
@@ -37,20 +37,36 @@ router.post('/register', function(req, res){
 			 if (err) {
 		        next(err);
 		    }
-		    return res.json({ message: 'user created!' });
+		    return res.status(200).json({ message: 'user created!' });
 		});
 	});
 
 });
 
 
-router.get('/register/failure', function(req, res){
-	res.send('failed to register');
+router.post('/login', function(req, res){
+	//filtering the extra params that user might pass
+	var acceptedParams = ['email', 'password'];
+	var returnedKeys = Object.keys(req.body); 
+	if (sanitizeRequestParams(acceptedParams, returnedKeys)){
+		return res.status(500).json({ error: 'invalid request' });	 
+	}
+
+	User.findOne({email: req.body.email}, function(err, user){
+		if (err){
+			return res.status(500).json(err);
+		}
+
+		if (user){
+			//if (createHash())
+		}
+		
+	});
+
+
 });
 
-router.get('/register/success', function(req, res){
-	res.send('successfully registered');
-});
+
 
 
 return router;
