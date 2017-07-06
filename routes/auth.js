@@ -13,7 +13,7 @@ router.post('/register', function(req, res){
 	var acceptedParams = ['email', 'fullname', 'password'];
 	var returnedKeys = Object.keys(req.body); 
 	if(sanitizeRequestParams(acceptedParams, returnedKeys)){
-		res.status(301).json({ error: 'invalid request' });	 
+		return res.status(301).json({ error: 'invalid request' });	 
 	}
 	//check whether the user is already in the database
 	User.findOne({email: req.body.email}, function(err, user){
@@ -23,6 +23,11 @@ router.post('/register', function(req, res){
 		if(user){
 			return res.status(301).json({error: 'user already exists'});
 		} 
+
+		if (req.body.email == "" || req.body.password == "" || req.body.fullname == ""){
+			return res.status(301).json({error: 'missing params'});
+		}
+
 		//now save the user to db
 		var newUser = new User();
 		newUser.email = req.body.email;
