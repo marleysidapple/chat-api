@@ -7,37 +7,35 @@ var createHash = require('./../config/hash');
 var sanitizeRequestParams = require('./../config/requestfilter');
 
 module.exports = function(passport){
-//sign up
-// router.post('/register', passport.authenticate('register', {
-// 		successRedirect: '/auth/register/success',
-// 		failureRedirect: '/auth/register/failure',
-// 	}));
 
-
-router.post('/register', function(req, res, next){
-
+router.post('/register', function(req, res){
 	//filtering the extra params that user might pass
 	var acceptedParams = ['email', 'fullname', 'password'];
 	var returnedKeys = Object.keys(req.body); 
-
 	if(sanitizeRequestParams(acceptedParams, returnedKeys)){
-		return res.json({'message': 'Invalid request'});
+		res.status(301).json({ error: 'invalid request' });	 
 	}
-
-	//now save the user to db
-	var newUser = new User();
-	newUser.email = req.body.email;
-	newUser.password = createHash(req.body.password);
-	newUser.fullname = req.body.fullname;
-	newUser.save(function(err){
-		if(err){
-			console.log('error in signup');
+	//check whether the user is already in the database
+	User.findOne({email: req.body.email}, function(err, user){
+		if (err){
+			return res.status(301).json(err);
 		}
-		console.log('success');
-		//	return done(null, newUser);
+		if(user){
+			return res.status(301).json({error: 'user already exists'});
+		} 
+		//now save the user to db
+		var newUser = new User();
+		newUser.email = req.body.email;
+		newUser.password = createHash(req.body.password);
+		newUser.fullname = req.body.fullname;
+		newUser.save(function(err){
+			 if (err) {
+		        next(err);
+		    }
+		    return res.json({ message: 'user created!' });
 		});
+	});
 
-	return res.json(req.body);
 });
 
 

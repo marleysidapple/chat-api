@@ -25,6 +25,7 @@ var authRoutes = require('./routes/auth')(passport);
  * c include model files
 */
 var database = require('./config/database.js');
+mongoose.Promise = global.Promise;
 mongoose.connect(database.url, {useMongoClient: true});
 
 
