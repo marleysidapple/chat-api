@@ -5,6 +5,8 @@ var mongoose = require('mongoose');
 var User = mongoose.model('User');
 var generateHash = require('./../config/hash');
 var sanitizeRequestParams = require('./../config/requestfilter');
+var jwt = require('jsonwebtoken');
+var keyToSecret = require('./../config/secret');
 
 module.exports = function(passport){
 
@@ -62,11 +64,15 @@ router.post('/login', function(req, res){
 		}
 
 		if (user){
-			if (generateHash.isValidPassword(user, req.body.password)){
-				//console.log(true);
-				//password matches
-			}
+			if (!generateHash.isValidPassword(user, req.body.password)){
+				return res.status(500).json({error: 'invalid credentials'});
+			} 
+			//we need to create a jwt token in here
+			var token = jwt.sign(user, keyToSecret.secret, {
+				expiresIn: '24h' 
+			});
 
+			return res.status(200).json({success: token});
 		}
 	});
 
