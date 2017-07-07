@@ -62,12 +62,12 @@ router.post('/login', function(req, res){
 		}
 
 		if (user){
-			// if verifyHash(user, req.body.password){
-			// 	console.log('success');
-			// }
-			//if (createHash())
+			if (generateHash.isValidPassword(user, req.body.password)){
+				//console.log(true);
+				//password matches
+			}
+
 		}
-		
 	});
 
 
