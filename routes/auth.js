@@ -3,7 +3,7 @@ var router = express.Router();
 var _ = require('lodash');
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
-var createHash = require('./../config/hash');
+var generateHash = require('./../config/hash');
 var sanitizeRequestParams = require('./../config/requestfilter');
 
 module.exports = function(passport){
@@ -31,7 +31,7 @@ router.post('/register', function(req, res){
 		//now save the user to db
 		var newUser = new User();
 		newUser.email = req.body.email;
-		newUser.password = createHash(req.body.password);
+		newUser.password = generateHash.createHash(req.body.password);
 		newUser.fullname = req.body.fullname;
 		newUser.save(function(err){
 			 if (err) {
@@ -52,12 +52,19 @@ router.post('/login', function(req, res){
 		return res.status(500).json({ error: 'invalid request' });	 
 	}
 
+	if (req.body.email == "" || req.body.password == ""){
+		return res.status(500).json({error: 'missing params'});
+	}
+
 	User.findOne({email: req.body.email}, function(err, user){
 		if (err){
 			return res.status(500).json(err);
 		}
 
 		if (user){
+			// if verifyHash(user, req.body.password){
+			// 	console.log('success');
+			// }
 			//if (createHash())
 		}
 		
