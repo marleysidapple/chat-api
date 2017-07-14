@@ -63,13 +63,15 @@ module.exports = function(){
 				}
 				if (user){
 					if (!generateHash.isValidPassword(user, req.body.password)){
-						return res.status(500).json({error: 'invalid credentials'});
+						return res.status(500).json({error: 'Invalid username/password combination'});
 					} 
 					//we need to create a jwt token in here
 					var token = jwt.sign(user, keyToSecret.secret, {
 						expiresIn: '24h' 
 					});
 					return res.status(200).json({success: token});
+				} else {
+					return res.status(500).json({error: 'Invalid Credentials'});
 				}
 			});
 		});
