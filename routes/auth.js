@@ -6,7 +6,7 @@ var User = mongoose.model('User');
 var generateHash = require('./../config/hash');
 var sanitizeRequestParams = require('./../config/requestfilter');
 var jwt = require('jsonwebtoken');
-var keyToSecret = require('./../config/secret');
+var cipher = require('./../config/secret');
 
 module.exports = function(){
 		router.post('/register', function(req, res){
@@ -66,7 +66,7 @@ module.exports = function(){
 						return res.status(500).json({error: 'Invalid username/password combination'});
 					} 
 					//we need to create a jwt token in here
-					var token = jwt.sign(user, keyToSecret.secret, {
+					var token = jwt.sign(user, cipher.secret, {
 						expiresIn: '24h' 
 					});
 					return res.status(200).json({success: token});
@@ -76,6 +76,13 @@ module.exports = function(){
 			});
 		});
 
-		return router;
+	
+	router.post('/user/token', function(req, res){
+		var decoded = jwt.verify(req.body.token, cipher.secret);
+		return res.status(200).json({success: decoded});
+	});
+
+
+	return router;
 }
 
