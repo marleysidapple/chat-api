@@ -79,7 +79,7 @@ module.exports = function(){
 	
 	router.post('/user/token', function(req, res){
 		var decoded = jwt.verify(req.body.token, cipher.secret);
-		return res.status(200).json({success: decoded});
+		return res.status(200).json(decoded._doc);
 	});
 
 
