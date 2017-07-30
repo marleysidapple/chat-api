@@ -44,7 +44,7 @@ module.exports = function(){
 
 		});
 
-
+		//login route
 		router.post('/login', function(req, res){
 			//filtering the extra params that user might pass
 			var acceptedParams = ['email', 'password'];
