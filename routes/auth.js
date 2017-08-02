@@ -83,6 +83,11 @@ module.exports = function(){
 	});
 
 
+	router.post('/user/profile', function(req, res){
+		return;
+	});
+
+
 	return router;
 }
 
